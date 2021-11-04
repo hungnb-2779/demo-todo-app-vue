@@ -1,21 +1,23 @@
 <template>
   <div class="hello">
-    <ComponentA/>
-    <ComponentA/>
-    <ComponentA/>
-    <hr>
+    <ComponentA />
+    <ComponentA />
+    <ComponentA />
+    <hr />
     <Header />
 
-    <button @click="countComputed++">Computed Count {{countComputed}} times</button>
-    <button @click="countMethod++">Method Count {{countMethod}} times</button>
-    <p>  {{ computedFunc }}</p>
-    <p>  {{ methodFunc() }}</p>
-
+    <button @click="countComputed++">
+      Computed Count {{ countComputed }} times
+    </button>
+    <button @click="countMethod++">Method Count {{ countMethod }} times</button>
+    <p>{{ computedFunc }}</p>
+    <p>{{ methodFunc() }}</p>
   </div>
 </template>
 
 <script>
 import Header from "./Header.vue";
+import eventBus from "./../assets/js/eventBus";
 var ComponentA = {
   /* ... */
   template: "<li>Đây là ComponentA</li>"
@@ -28,24 +30,29 @@ export default {
   },
   data() {
     return {
-      countComputed:0,
-      countMethod:0,
+      countComputed: 0,
+      countMethod: 0
     };
   },
-  computed:{
-    computedFunc(){
-      console.log('computed count: '+this.countComputed);
+  computed: {
+    computedFunc() {
+      console.log("computed count: " + this.countComputed);
     }
   },
-  methods:{
-    methodFunc(){
-      console.log('method count: '+this.countMethod);
+  created() {
+    eventBus.$on("my-event", (data) => {
+      console.log("my-event called on global event bus "+data.title);
+    });
+  },
+  methods: {
+    methodFunc() {
+      console.log("method count: " + this.countMethod);
     }
   },
-  watch:{
-    countMethod: function (newValue, oldValue){
-      console.log('watch countMethod new value' + newValue);
-      console.log('watch countMethod new value' + newValue);
+  watch: {
+    countMethod: function(newValue, oldValue) {
+      console.log("watch countMethod new value" + newValue);
+      console.log("watch countMethod new value" + newValue);
     }
   }
 };

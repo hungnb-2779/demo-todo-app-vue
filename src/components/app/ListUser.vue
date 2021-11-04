@@ -100,14 +100,14 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(user, index) in users" :key="index">
-              <th scope="row">1</th>
+            <tr v-for="(user, index) in userPublic" v-bind:key="index">
+              <th scope="row">{{ ++index }}</th>
               <td>{{ user.name }}</td>
               <td>{{ user.phone }}</td>
               <td>{{ user.email }}</td>
               <td>{{ user.address }}</td>
               <td>
-                <button @click="editUser(index)" class="btn btn-warning btn-sm">
+                <button @click="editUser(user.id)" class="btn btn-warning btn-sm">
                   Sửa
                 </button>
                 <button
@@ -126,6 +126,8 @@
 </template>
 
 <script>
+import { v4 as uuidv4 } from "uuid";
+
 export default {
   name: "listUser",
   data() {
@@ -144,21 +146,40 @@ export default {
       },
       users: [
         {
-          name: "Bá Hùng",
-          email: "bahung2108@gmail.com",
-          phone: "0972218408",
-          address: "210 quang trung hà đông hà nội"
+          id:1,
+          name: "User 1",
+          email: "user2@gmail.com",
+          phone: "0972218xxx",
+          address: "210 quang trung hà đông hà nội",
+          publish: 1
         },
         {
-          name: "Nguyễn Bá Hùng",
-          email: "nguyenbahung2108@gmail.com",
-          phone: "0972218408",
-          address: "210 quang trung hà đông hà nội"
+          id:2,
+          name: "User 2",
+          email: "user2@gmail.com",
+          phone: "0972218xxx",
+          address: "210 quang trung hà đông hà nội",
+          publish: 1
+        },
+        {
+          id:3,
+          name: "User 3",
+          email: "user3@gmail.com",
+          phone: "0972218xxx",
+          address: "210 quang trung hà đông hà nội",
+          publish: 0
         }
       ]
     };
   },
-  computed: {},
+  computed: {
+    userPublic() {
+      return this.users.filter(function(u) {
+        return u.publish;
+      });
+    }
+  },
+
   methods: {
     deleteUser: function(idx) {
       var indexDelete = -1;
@@ -170,11 +191,11 @@ export default {
       });
       if (indexDelete != -1) this.users.splice(indexDelete, 1);
     },
-    editUser(index) {
-      this.indexUser = index;
+    editUser(userId) {
+      this.indexUser = userId
       this.action = "edit";
-      this.users.forEach((user, idx) => {
-        if (index === idx) {
+      this.users.filter((user) => {
+        if (user.id === userId) {
           this.name = user.name;
           this.phone = user.phone;
           this.email = user.email;
@@ -186,26 +207,34 @@ export default {
       $("#exampleModal").modal("show");
     },
     formUser() {
-      (this.action = "add"), (this.name = "");
-      this.phone = "";
-      this.email = "";
-      this.address = "";
+      if ((this.action = "add")) {
+        this.name = "";
+        this.phone = "";
+        this.email = "";
+        this.address = "";
+      }
       $("#exampleModal").modal("show");
     },
     saveUser() {
+      console.log(this.action);
       if (this.action == "add") {
         if (this.name && this.phone && this.email && this.address) {
-          this.users.push({
+          console.log(1);
+          let newUser = {
+            id: uuidv4(),
             name: this.name,
             phone: this.phone,
             email: this.email,
-            address: this.address
-          });
+            address: this.address,
+            publish:true
+          };
+          console.log(newUser);
+          this.users.unshift(newUser);
           $("#exampleModal").modal("hide");
         }
       } else {
-        this.users.forEach((user, idx) => {
-          if (this.indexUser === idx) {
+        this.users.filter((user) => {
+          if (this.indexUser === user.id) {
             user.name = this.name;
             user.phone = this.phone;
             user.email = this.email;
